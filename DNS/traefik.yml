@@ -1,0 +1,48 @@
+log:
+  level: INFO
+
+#static configuration
+
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: false
+
+#TLS Option
+serversTransport:
+  insecureSkipVerify: false
+
+#Use the file provider vs labels in the docker-compose file
+providers:
+  providersThrottleDuration: 0
+  file:
+    directory: /services/
+    watch: true
+    debugLogGeneratedTemplate: true
+
+#Enable admin dashboard
+api:
+  dashboard: true
+
+#configure lets encrypt
+certificatesResolvers:
+  letsEncrypt:
+    #settings for dns test
+    acme:
+      email: <email>
+      #caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
+      caServer:  https://acme-v02.api.letsencrypt.org/directory
+      keyType: EC384
+      dnsChallenge:
+        provider: <provider>
+        delayBeforeCheck: 0
+
+#ports/protocols processed by traefik
+#https://doc.traefik.io/traefik/routing/entrypoints/
+entryPoints:
+  dns-tcp:
+    address: ":53"
+  dns-udp:
+    address: ":53/udp"
+
+#traffic flow: entryPoint (static config) -> router (dynamic) -> 
+#  middleware (dynamic, optional) -> service (dynamic)
